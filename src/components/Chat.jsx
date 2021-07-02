@@ -1,74 +1,46 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 function Chat({ currentUser, restOfTheUsers }) {
+  const [messages, setMessages] = useState([]);
   const { chatId } = useParams();
+
   const participant = restOfTheUsers.find((user) => user.id == chatId);
+
+  useEffect(() => {
+    fetch(`http://localhost:4000/messages?conversationId=${chatId}`)
+      .then((resp) => resp.json())
+      .then((data) => setMessages(data));
+  }, []);
+
+  console.log(messages);
 
   return (
     <>
-      <header className="panel">Chatting with {participant.firstName}</header>
+      <header className="panel">
+        <img
+          className="avatar"
+          height="50"
+          width="50"
+          alt=""
+          src={participant.avatar}
+        />
+        <h3>
+          {participant.firstName} {participant.lastName}
+        </h3>
+      </header>
+
       <ul className="conversation__messages">
-        <li className="outgoing">
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus
-            excepturi non odit quisquam et assumenda suscipit maxime officiis
-            repellat possimus! Soluta illum rerum eligendi labore ut nemo quod
-            voluptates ad.
-          </p>
-        </li>
-        {/* <!-- Outgoing messages are messages sent by the current logged in user --> */}
-        <li className="outgoing">
-          <p>Lorem ipsum...</p>
-        </li>
-        {/* <!--  --> */}
-        {/* <!-- This one doesnt belong to the current logged in user --> */}
-        <li>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus
-            excepturi non odit quisquam et assumenda suscipit maxime officiis
-            repellat possimus!
-          </p>
-        </li>
-        {/* <!--  --> */}
-        <li className="outgoing">
-          <p>Some test message</p>
-        </li>
-        <li className="outgoing">
-          <p>more messagesss!!!</p>
-        </li>
-        <li className="outgoing">
-          <p>more messagesss!!!</p>
-        </li>
-        <li className="outgoing">
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus
-            excepturi non odit quisquam et assumenda suscipit maxime officiis
-            repellat possimus! Soluta illum rerum eligendi labore ut nemo quod
-            voluptates ad.Lorem ipsum dolor sit amet consectetur, adipisicing
-            elit. Natus excepturi non odit quisquam et assumenda suscipit maxime
-            officiis repellat possimus! Soluta illum rerum eligendi labore ut
-            nemo quod voluptates ad.Lorem ipsum dolor sit amet consectetur,
-            adipisicing elit. Natus excepturi non odit quisquam et assumenda
-            suscipit maxime officiis repellat possimus! Soluta illum rerum
-            eligendi labore ut nemo quod voluptates ad.Lorem ipsum dolor sit
-            amet consectetur, adipisicing elit. Natus excepturi non odit
-            quisquam et assumenda suscipit maxime officiis repellat possimus!
-            Soluta illum rerum eligendi labore ut nemo quod voluptates ad.Lorem
-            ipsum dolor sit amet consectetur, adipisicing elit. Natus excepturi
-            non odit quisquam et assumenda suscipit maxime officiis repellat
-            possimus! Soluta illum rerum eligendi labore ut nemo quod voluptates
-            ad.Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus
-            excepturi non odit quisquam et assumenda suscipit maxime officiis
-            repellat possimus! Soluta illum rerum eligendi labore ut nemo quod
-            voluptates ad.Lorem ipsum dolor sit amet consectetur, adipisicing
-            elit. Natus excepturi non odit quisquam et assumenda suscipit maxime
-            officiis repellat possimus! Soluta illum rerum eligendi labore ut
-            nemo quod voluptates ad.
-          </p>
-        </li>
+        {messages.map((message) => (
+          <li
+            key={message.id}
+            className={message.userId === currentUser.id ? "outgoing" : ""}
+          >
+            <p>{message.messageText}</p>
+          </li>
+        ))}
       </ul>
 
-      {/* <!-- Message Box --> */}
       <footer>
         <form className="panel conversation__message-box">
           <input type="text" placeholder="Type a message" rows="1" />
