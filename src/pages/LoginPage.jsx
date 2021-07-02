@@ -19,8 +19,8 @@ function LoginPage({ onLogin }) {
       <section className="login-section">
         <h2>Choose your user!</h2>
         <ul>
-          {users.map((user, index) => (
-            <li key={index}>
+          {users.map((user) => (
+            <li key={user.id}>
               <button onClick={() => login(user)} className="user-selection">
                 <img
                   className="avatar"
